@@ -1,0 +1,27 @@
+{
+  "name": "lr_rest_books_node",
+  "version": "1.0.0",
+  "description": "RESTful API implemented with Express in Node.js.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Literank/lr_rest_books_node.git"
+  },
+  "keywords": [
+    "express",
+    "rest",
+    "books"
+  ],
+  "author": "literank.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Literank/lr_rest_books_node/issues"
+  },
+  "homepage": "https://github.com/Literank/lr_rest_books_node#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
