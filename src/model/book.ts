@@ -1,5 +1,5 @@
 // Book represents the structure of a book
-interface Book {
+export interface Book {
   id: number;
   title: string;
   author: string;
