@@ -1,1 +1,1 @@
-export { Config } from "./config";
+export { Config, parseConfig } from "./config";
