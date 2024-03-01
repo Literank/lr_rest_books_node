@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import morgan from "morgan";
 
 import { Book } from "@/domain/model";
 import { BookOperator } from "@/application/executor";
@@ -104,6 +105,9 @@ export function InitApp(wireHelper: WireHelper): express.Express {
 
   // Middleware to parse JSON bodies
   app.use(express.json());
+
+  // Use Morgan middleware with predefined 'combined' format
+  app.use(morgan("combined"));
 
   // Define a health endpoint handler
   app.get("/", (req: Request, res: Response) => {
