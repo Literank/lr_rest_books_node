@@ -9,6 +9,7 @@ const c = {
   },
   db: {
     fileName: "test.db",
+    dsn: "mysql://test_user:test_pass@127.0.0.1:3306/lr_book?charset=utf8mb4",
   },
 };
 const wireHelper = new WireHelper(c);

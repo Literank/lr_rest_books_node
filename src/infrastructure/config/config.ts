@@ -1,5 +1,6 @@
 interface DBConfig {
   fileName: string;
+  dsn: string;
 }
 
 interface ApplicationConfig {
