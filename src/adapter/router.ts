@@ -2,16 +2,26 @@ import express, { Request, Response } from "express";
 import morgan from "morgan";
 
 import { Book } from "@/domain/model";
-import { BookOperator, ReviewOperator } from "@/application/executor";
+import {
+  BookOperator,
+  ReviewOperator,
+  UserOperator,
+} from "@/application/executor";
 import { WireHelper } from "@/application";
 
 class RestHandler {
   private bookOperator: BookOperator;
   private reviewOperator: ReviewOperator;
+  private userOperator: UserOperator;
 
-  constructor(bookOperator: BookOperator, reviewOperator: ReviewOperator) {
+  constructor(
+    bookOperator: BookOperator,
+    reviewOperator: ReviewOperator,
+    userOperator: UserOperator
+  ) {
     this.bookOperator = bookOperator;
     this.reviewOperator = reviewOperator;
+    this.userOperator = userOperator;
   }
 
   // Get all books
@@ -163,13 +173,39 @@ class RestHandler {
       res.status(404).json({ error: "failed to delete the review" });
     }
   }
+
+  public async userSignUp(req: Request, res: Response): Promise<void> {
+    const userCredential = req.body;
+    try {
+      const result = await this.userOperator.createUser(userCredential);
+      res.status(201).json(result);
+    } catch (err) {
+      console.error(`Failed to create: ${err}`);
+      res.status(404).json({ error: "failed to create the user" });
+    }
+  }
+
+  public async userSignIn(req: Request, res: Response): Promise<void> {
+    const userCredential = req.body;
+    try {
+      const result = await this.userOperator.signIn(
+        userCredential.email,
+        userCredential.password
+      );
+      res.status(200).json(result);
+    } catch (err: any) {
+      console.error(`Failed to sign in: ${err}`);
+      res.status(404).json({ error: err.message });
+    }
+  }
 }
 
 // Create router
 function MakeRouter(wireHelper: WireHelper): express.Router {
   const restHandler = new RestHandler(
     new BookOperator(wireHelper.bookManager(), wireHelper.cacheHelper()),
-    new ReviewOperator(wireHelper.reviewManager())
+    new ReviewOperator(wireHelper.reviewManager()),
+    new UserOperator(wireHelper.userManager())
   );
 
   const router = express.Router();
@@ -187,6 +223,9 @@ function MakeRouter(wireHelper: WireHelper): express.Router {
   router.post("/reviews", restHandler.createReview.bind(restHandler));
   router.put("/reviews/:id", restHandler.updateReview.bind(restHandler));
   router.delete("/reviews/:id", restHandler.deleteReview.bind(restHandler));
+
+  router.post("/users", restHandler.userSignUp.bind(restHandler));
+  router.post("/users/sign-in", restHandler.userSignIn.bind(restHandler));
 
   return router;
 }

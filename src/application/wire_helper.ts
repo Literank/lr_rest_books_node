@@ -1,5 +1,5 @@
 import { Config } from "@/infrastructure/config";
-import { BookManager, ReviewManager } from "@/domain/gateway";
+import { BookManager, ReviewManager, UserManager } from "@/domain/gateway";
 import { MySQLPersistence, MongoPersistence } from "@/infrastructure/database";
 import { RedisCache, CacheHelper } from "@/infrastructure/cache";
 
@@ -19,6 +19,10 @@ export class WireHelper {
   }
 
   bookManager(): BookManager {
+    return this.sql_persistence;
+  }
+
+  userManager(): UserManager {
     return this.sql_persistence;
   }
 

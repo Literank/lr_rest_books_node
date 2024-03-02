@@ -1,9 +1,9 @@
 import mysql, { ResultSetHeader, RowDataPacket } from "mysql2";
 
-import { Book } from "@/domain/model/book";
-import { BookManager } from "@/domain/gateway/book_manager";
+import { Book, User } from "@/domain/model";
+import { BookManager, UserManager } from "@/domain/gateway";
 
-export class MySQLPersistence implements BookManager {
+export class MySQLPersistence implements BookManager, UserManager {
   private db: mysql.Connection;
   private page_size: number;
 
@@ -82,6 +82,25 @@ export class MySQLPersistence implements BookManager {
     params.push(offset, this.page_size);
     const [rows] = await this.db.promise().query(query, params);
     return rows as Book[];
+  }
+
+  async createUser(u: User): Promise<number> {
+    const { email, password, salt, is_admin } = u;
+    const [result] = await this.db
+      .promise()
+      .query(
+        "INSERT INTO users (email, password, salt, is_admin, created_at, updated_at) VALUES (?, ?, ?, ?, now(), now())",
+        [email, password, salt, is_admin]
+      );
+    return (result as ResultSetHeader).insertId;
+  }
+
+  async getUserByEmail(email: string): Promise<User | null> {
+    let [rows] = await this.db
+      .promise()
+      .query("SELECT * FROM users WHERE email = ?", [email]);
+    rows = rows as RowDataPacket[];
+    return rows.length ? (rows[0] as User) : null;
   }
 
   close(): void {
