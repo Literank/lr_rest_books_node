@@ -26,8 +26,8 @@ export class ReviewOperator {
     return await this.reviewManager.getReview(id);
   }
 
-  async getReviewsOfBook(book_id: number): Promise<Review[]> {
-    return await this.reviewManager.getReviewsOfBook(book_id);
+  async getReviewsOfBook(book_id: number, query: string): Promise<Review[]> {
+    return await this.reviewManager.getReviewsOfBook(book_id, query);
   }
 
   async updateReview(id: string, r: Review): Promise<Review> {

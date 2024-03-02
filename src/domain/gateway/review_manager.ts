@@ -5,5 +5,5 @@ export interface ReviewManager {
   updateReview(id: string, r: Review): Promise<void>;
   deleteReview(id: string): Promise<void>;
   getReview(id: string): Promise<Review | null>;
-  getReviewsOfBook(book_id: number): Promise<Review[]>;
+  getReviewsOfBook(book_id: number, keyword: string): Promise<Review[]>;
 }

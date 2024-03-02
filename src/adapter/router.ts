@@ -100,7 +100,10 @@ class RestHandler {
     }
 
     try {
-      const books = await this.reviewOperator.getReviewsOfBook(bookID);
+      const books = await this.reviewOperator.getReviewsOfBook(
+        bookID,
+        req.query.q as string
+      );
       res.status(200).json(books);
     } catch (err) {
       console.error(`Failed to get reviews of book ${bookID}: ${err}`);

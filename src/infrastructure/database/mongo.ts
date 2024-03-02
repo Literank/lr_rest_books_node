@@ -1,4 +1,11 @@
-import { MongoClient, Db, Collection, ObjectId } from "mongodb";
+import {
+  MongoClient,
+  Db,
+  Collection,
+  ObjectId,
+  Filter,
+  Document,
+} from "mongodb";
 import { Review } from "@/domain/model";
 import { ReviewManager } from "@/domain/gateway";
 
@@ -63,8 +70,15 @@ export class MongoPersistence implements ReviewManager {
     };
   }
 
-  async getReviewsOfBook(book_id: number): Promise<Review[]> {
-    const cursor = this.coll.find({ book_id });
+  async getReviewsOfBook(book_id: number, keyword: string): Promise<Review[]> {
+    const filter: Filter<Document> = { book_id };
+    if (keyword) {
+      filter.$or = [
+        { title: { $regex: keyword, $options: "i" } }, // Case-insensitive regex search for title
+        { content: { $regex: keyword, $options: "i" } }, // Case-insensitive regex search for content
+      ];
+    }
+    const cursor = this.coll.find(filter);
     const reviewDocs = await cursor.toArray();
     return reviewDocs.map((reviewDoc) => ({
       id: reviewDoc._id.toHexString(),
