@@ -1,0 +1,21 @@
+{
+  "app": {
+    "port": 3000,
+    "page_size": 5,
+    "token_secret": "LiteRank_in_Compose",
+    "token_hours": 48
+  },
+  "db": {
+    "file_name": "test.db",
+    "dsn": "mysql://test_user:test_pass@mysql:3306/lr_book?charset=utf8mb4",
+    "mongo_uri": "mongodb://mongo:27017",
+    "mongo_db_name": "lr_book"
+  },
+  "cache": {
+    "host": "redis",
+    "port": 6379,
+    "password": "test_pass",
+    "db": 0,
+    "timeout": 5000
+  }
+}
