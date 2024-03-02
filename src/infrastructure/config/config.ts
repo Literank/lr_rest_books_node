@@ -9,6 +9,7 @@ interface DBConfig {
 
 interface ApplicationConfig {
   port: number;
+  page_size: number;
 }
 
 export interface CacheConfig {

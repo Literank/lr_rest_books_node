@@ -5,5 +5,5 @@ export interface BookManager {
   updateBook(id: number, b: Book): Promise<void>;
   deleteBook(id: number): Promise<void>;
   getBook(id: number): Promise<Book | null>;
-  getBooks(): Promise<Book[]>;
+  getBooks(offset: number): Promise<Book[]>;
 }

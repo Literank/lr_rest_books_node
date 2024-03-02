@@ -10,7 +10,7 @@ export class WireHelper {
   private kv_store: RedisCache;
 
   constructor(c: Config) {
-    this.sql_persistence = new MySQLPersistence(c.db.dsn);
+    this.sql_persistence = new MySQLPersistence(c.db.dsn, c.app.page_size);
     this.no_sql_persistence = new MongoPersistence(
       c.db.mongo_uri,
       c.db.mongo_db_name

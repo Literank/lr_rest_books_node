@@ -1,6 +1,7 @@
 {
   "app": {
-    "port": 3000
+    "port": 3000,
+    "page_size": 5
   },
   "db": {
     "file_name": "test.db",

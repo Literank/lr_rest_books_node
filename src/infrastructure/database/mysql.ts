@@ -5,8 +5,10 @@ import { BookManager } from "@/domain/gateway/book_manager";
 
 export class MySQLPersistence implements BookManager {
   private db: mysql.Connection;
+  private page_size: number;
 
-  constructor(dsn: string) {
+  constructor(dsn: string, page_size: number) {
+    this.page_size = page_size;
     this.db = mysql.createConnection(dsn);
     this.db.addListener("error", (err) => {
       console.error("Error connecting to MySQL:", err.message);
@@ -67,8 +69,10 @@ export class MySQLPersistence implements BookManager {
     return rows.length ? (rows[0] as Book) : null;
   }
 
-  async getBooks(): Promise<Book[]> {
-    const [rows] = await this.db.promise().query("SELECT * FROM books");
+  async getBooks(offset: number): Promise<Book[]> {
+    const [rows] = await this.db
+      .promise()
+      .query("SELECT * FROM books LIMIT ?, ?", [offset, this.page_size]);
     return rows as Book[];
   }
 

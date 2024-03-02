@@ -16,8 +16,12 @@ class RestHandler {
 
   // Get all books
   public async getBooks(req: Request, res: Response): Promise<void> {
+    let offset = parseInt(req.query.o as string);
+    if (isNaN(offset)) {
+      offset = 0;
+    }
     try {
-      const books = await this.bookOperator.getBooks();
+      const books = await this.bookOperator.getBooks(offset);
       res.status(200).json(books);
     } catch (err) {
       console.error(`Failed to get books: ${err}`);

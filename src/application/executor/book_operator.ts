@@ -23,13 +23,14 @@ export class BookOperator {
     return await this.bookManager.getBook(id);
   }
 
-  async getBooks(): Promise<Book[]> {
-    const cache_value = await this.cacheHelper.load(booksKey);
+  async getBooks(offset: number): Promise<Book[]> {
+    const k = `${booksKey}-${offset}`;
+    const cache_value = await this.cacheHelper.load(k);
     if (cache_value) {
       return JSON.parse(cache_value);
     }
-    const books = await this.bookManager.getBooks();
-    await this.cacheHelper.save(booksKey, JSON.stringify(books));
+    const books = await this.bookManager.getBooks(offset);
+    await this.cacheHelper.save(k, JSON.stringify(books));
     return books;
   }
 
