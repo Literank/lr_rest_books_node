@@ -158,7 +158,7 @@ class RestHandler {
 // Create router
 function MakeRouter(wireHelper: WireHelper): express.Router {
   const restHandler = new RestHandler(
-    new BookOperator(wireHelper.bookManager()),
+    new BookOperator(wireHelper.bookManager(), wireHelper.cacheHelper()),
     new ReviewOperator(wireHelper.reviewManager())
   );
 
@@ -187,8 +187,12 @@ export function InitApp(wireHelper: WireHelper): express.Express {
   // Middleware to parse JSON bodies
   app.use(express.json());
 
-  // Use Morgan middleware with predefined 'combined' format
-  app.use(morgan("combined"));
+  // Use Morgan middleware with predefined tokens
+  app.use(
+    morgan(
+      ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" - :response-time ms'
+    )
+  );
 
   // Define a health endpoint handler
   app.get("/", (req: Request, res: Response) => {

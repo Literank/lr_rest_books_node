@@ -1,11 +1,16 @@
 import { BookManager } from "@/domain/gateway";
 import { Book } from "@/domain/model";
+import { CacheHelper } from "@/infrastructure/cache";
+
+const booksKey = "lr-books";
 
 export class BookOperator {
   private bookManager: BookManager;
+  private cacheHelper: CacheHelper;
 
-  constructor(b: BookManager) {
+  constructor(b: BookManager, c: CacheHelper) {
     this.bookManager = b;
+    this.cacheHelper = c;
   }
 
   async createBook(b: Book): Promise<Book> {
@@ -19,7 +24,13 @@ export class BookOperator {
   }
 
   async getBooks(): Promise<Book[]> {
-    return await this.bookManager.getBooks();
+    const cache_value = await this.cacheHelper.load(booksKey);
+    if (cache_value) {
+      return JSON.parse(cache_value);
+    }
+    const books = await this.bookManager.getBooks();
+    await this.cacheHelper.save(booksKey, JSON.stringify(books));
+    return books;
   }
 
   async updateBook(id: number, b: Book): Promise<Book> {

@@ -7,5 +7,12 @@
     "dsn": "mysql://test_user:test_pass@127.0.0.1:3306/lr_book?charset=utf8mb4",
     "mongo_uri": "mongodb://localhost:27017",
     "mongo_db_name": "lr_book"
+  },
+  "cache": {
+    "host": "localhost",
+    "port": 6379,
+    "password": "test_pass",
+    "db": 0,
+    "timeout": 5000
   }
 }
