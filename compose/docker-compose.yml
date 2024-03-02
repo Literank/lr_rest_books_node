@@ -1,6 +1,8 @@
 services:
   lr-rest-books:
-    image: lrbooks-nodejs:latest
+    build:
+      context: ../
+      dockerfile: Dockerfile
     ports:
       - 3000:3000
     volumes:
