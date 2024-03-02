@@ -1,13 +1,14 @@
 import express, { Request, Response } from "express";
 import morgan from "morgan";
 
-import { Book } from "@/domain/model";
+import { Book, UserPermission } from "@/domain/model";
 import {
   BookOperator,
   ReviewOperator,
   UserOperator,
 } from "@/application/executor";
 import { WireHelper } from "@/application";
+import { permCheck } from "@/adapter/middleware";
 
 class RestHandler {
   private bookOperator: BookOperator;
@@ -202,19 +203,32 @@ class RestHandler {
 
 // Create router
 function MakeRouter(wireHelper: WireHelper): express.Router {
+  const pm = wireHelper.permManager();
   const restHandler = new RestHandler(
     new BookOperator(wireHelper.bookManager(), wireHelper.cacheHelper()),
     new ReviewOperator(wireHelper.reviewManager()),
-    new UserOperator(wireHelper.userManager())
+    new UserOperator(wireHelper.userManager(), pm)
   );
 
   const router = express.Router();
 
   router.get("/books", restHandler.getBooks.bind(restHandler));
   router.get("/books/:id", restHandler.getBook.bind(restHandler));
-  router.post("/books", restHandler.createBook.bind(restHandler));
-  router.put("/books/:id", restHandler.updateBook.bind(restHandler));
-  router.delete("/books/:id", restHandler.deleteBook.bind(restHandler));
+  router.post(
+    "/books",
+    permCheck(pm, UserPermission.PermAuthor),
+    restHandler.createBook.bind(restHandler)
+  );
+  router.put(
+    "/books/:id",
+    permCheck(pm, UserPermission.PermAuthor),
+    restHandler.updateBook.bind(restHandler)
+  );
+  router.delete(
+    "/books/:id",
+    permCheck(pm, UserPermission.PermAuthor),
+    restHandler.deleteBook.bind(restHandler)
+  );
   router.get(
     "/books/:id/reviews",
     restHandler.getReviewsOfBook.bind(restHandler)

@@ -1,2 +1,2 @@
 export { ReviewBody } from "./review";
-export { UserCredential, User } from "./user";
+export { UserCredential, User, UserToken } from "./user";

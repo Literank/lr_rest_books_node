@@ -1,7 +1,8 @@
 import { createHash } from "crypto";
 
-import { UserManager } from "@/domain/gateway";
-import { UserCredential, User } from "@/application/dto";
+import { PermissionManager, UserManager } from "@/domain/gateway";
+import { UserCredential, User, UserToken } from "@/application/dto";
+import { UserPermission } from "@/domain/model";
 
 const saltLen = 4;
 const errEmptyEmail = "empty email";
@@ -10,9 +11,11 @@ const errDoesNotExist = "user does not exist";
 
 export class UserOperator {
   private userManager: UserManager;
+  private permManager: PermissionManager;
 
-  constructor(u: UserManager) {
+  constructor(u: UserManager, p: PermissionManager) {
     this.userManager = u;
+    this.permManager = p;
   }
 
   async createUser(uc: UserCredential): Promise<User | null> {
@@ -33,7 +36,7 @@ export class UserOperator {
     return { id, email: uc.email };
   }
 
-  async signIn(email: string, password: string): Promise<User | null> {
+  async signIn(email: string, password: string): Promise<UserToken | null> {
     if (!email) {
       throw new Error(errEmptyEmail);
     }
@@ -48,8 +51,17 @@ export class UserOperator {
     if (user.password !== passwordHash) {
       throw new Error("wrong password");
     }
-    return { id: user.id!, email: user.email };
+    const token = this.permManager.generateToken(
+      user.id!,
+      user.email,
+      calcPerm(user.is_admin)
+    );
+    return { user: { id: user.id!, email: user.email }, token };
   }
+}
+
+function calcPerm(isAdmin: boolean): UserPermission {
+  return isAdmin ? UserPermission.PermAdmin : UserPermission.PermUser;
 }
 
 function randomString(length: number): string {

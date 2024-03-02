@@ -9,3 +9,8 @@ export interface User {
   id: number;
   email: string;
 }
+
+export interface UserToken {
+  user: User;
+  token: string;
+}

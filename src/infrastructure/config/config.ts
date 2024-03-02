@@ -10,6 +10,8 @@ interface DBConfig {
 interface ApplicationConfig {
   port: number;
   page_size: number;
+  token_secret: string;
+  token_hours: number;
 }
 
 export interface CacheConfig {
