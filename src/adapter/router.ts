@@ -21,7 +21,10 @@ class RestHandler {
       offset = 0;
     }
     try {
-      const books = await this.bookOperator.getBooks(offset);
+      const books = await this.bookOperator.getBooks(
+        offset,
+        req.query.q as string
+      );
       res.status(200).json(books);
     } catch (err) {
       console.error(`Failed to get books: ${err}`);

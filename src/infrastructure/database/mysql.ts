@@ -69,10 +69,18 @@ export class MySQLPersistence implements BookManager {
     return rows.length ? (rows[0] as Book) : null;
   }
 
-  async getBooks(offset: number): Promise<Book[]> {
-    const [rows] = await this.db
-      .promise()
-      .query("SELECT * FROM books LIMIT ?, ?", [offset, this.page_size]);
+  async getBooks(offset: number, keyword: string): Promise<Book[]> {
+    let query = "SELECT * FROM books";
+    let params: (string | number)[] = [];
+
+    if (keyword) {
+      query += " WHERE title LIKE ? OR author LIKE ?";
+      params = [`%${keyword}%`, `%${keyword}%`];
+    }
+
+    query += " LIMIT ?, ?";
+    params.push(offset, this.page_size);
+    const [rows] = await this.db.promise().query(query, params);
     return rows as Book[];
   }
 
